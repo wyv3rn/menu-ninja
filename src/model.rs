@@ -59,6 +59,10 @@ impl Dishes {
         }
     }
 
+    pub fn dish_exists(&self, name: &str) -> bool {
+        self.dishes.contains_key(name)
+    }
+
     pub fn get_dish(&self, name: &str) -> Option<Dish> {
         self.dishes.get(name).cloned()
     }
@@ -81,4 +85,13 @@ impl Dishes {
             d.set_last_cooked(time)
         }
     }
+
+    pub fn remove_dish(&mut self, name: String) {
+        self.dishes.remove(&name);
+    }
+}
+
+#[derive(Deserialize)]
+pub struct NewDishForm {
+    pub name: String,
 }

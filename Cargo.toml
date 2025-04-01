@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-axum = "0.8.1"
+axum = {version = "0.8.1", features = ["form"] }
 bjw-db = { git = "https://telematik.prakinf.tu-ilmenau.de/gitlab/dschatz/bjw-db.git", version = "0.1.0", features = ["derive"] }
 bjw-db-derive = { git = "https://telematik.prakinf.tu-ilmenau.de/gitlab/dschatz/bjw-db.git", version = "0.1.0" }
 maud = { version = "0.27", features = ["axum"] }
