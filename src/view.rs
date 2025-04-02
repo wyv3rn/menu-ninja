@@ -76,12 +76,12 @@ fn errors_as_markup(errors: &ErrorList) -> Markup {
 
 fn format_time(secs: u64) -> String {
     if secs < 60 {
-        format!("{secs}s")
+        format!("{secs} s")
     } else if secs < 60 * 60 {
-        format!("{}m", secs / 60)
+        format!("{} m", secs / 60)
     } else if secs < 24 * 60 * 60 {
-        format!("{}h", secs / (60 * 60))
+        format!("{} h", secs / (60 * 60))
     } else {
-        format!("{}d", secs / (24 * 60 * 60))
+        format!("{} d", secs / (24 * 60 * 60))
     }
 }
