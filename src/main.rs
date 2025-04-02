@@ -11,7 +11,7 @@ use maud::{Markup, html};
 mod model;
 mod view;
 
-use model::{DishesDb, NewDishForm};
+use model::{DishesDb, NewDishForm, now};
 use view::{dish_table, new_dish_form};
 
 type StateDb = State<Arc<DishesDb>>;
@@ -26,6 +26,7 @@ async fn main() {
         .route("/dishes", get(dishes))
         .route("/dishes/new", get(new_dish_get))
         .route("/dishes/new", post(new_dish_post))
+        .route("/dishes/{name}/cooked", post(cooked))
         .route("/dishes/{name}/delete", post(delete_dish))
         .with_state(db);
 
@@ -59,6 +60,11 @@ async fn new_dish_post(State(db): StateDb, Form(input): Form<NewDishForm>) -> Re
         db.new_dish(input.name).unwrap(); // TODO no unwrap
         Redirect::to("/dishes").into_response()
     }
+}
+
+async fn cooked(State(db): StateDb, Path(name): Path<String>) -> Redirect {
+    db.set_last_cooked(name, now()).unwrap(); // TODO no unwrap
+    Redirect::to("/dishes")
 }
 
 async fn delete_dish(State(db): StateDb, Path(name): Path<String>) -> Redirect {

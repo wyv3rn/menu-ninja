@@ -14,13 +14,19 @@ pub fn dish_table(dishes: &[Dish]) -> Markup {
             tbody {
                 @for dish in dishes {
                     @let not_cooked_for = match dish.not_cooked_for() {
-                        Some(t) => format!("{t}s"),
+                        Some(t) => format_time(t),
                         None => "-".to_string(),
                     };
+                    @let cooked_url = format!("/dishes/{}/cooked", dish.name());
                     @let delete_url = format!("/dishes/{}/delete", dish.name());
                     tr {
                         td { (dish.name()) }
                         td { (not_cooked_for) }
+                        td {
+                            form action=(cooked_url) method="post" {
+                                button { "Woar des gut!" }
+                            }
+                        }
                         td {
                             form action=(delete_url) method="post" {
                                 button { "Nie widder!" }
@@ -65,5 +71,17 @@ fn errors_as_markup(errors: &ErrorList) -> Markup {
     };
     html! {
         p style="margin-left: 2em;" { (as_list) }
+    }
+}
+
+fn format_time(secs: u64) -> String {
+    if secs < 60 {
+        format!("{secs}s")
+    } else if secs < 60 * 60 {
+        format!("{}m", secs / 60)
+    } else if secs < 24 * 60 * 60 {
+        format!("{}h", secs / (60 * 60))
+    } else {
+        format!("{}d", secs / (24 * 60 * 60))
     }
 }
