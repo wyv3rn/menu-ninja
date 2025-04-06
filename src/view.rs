@@ -3,6 +3,27 @@ use maud::{Markup, html};
 
 pub type ErrorList<'a> = [&'a str];
 
+pub fn landing_page(dishes: &[Dish], query: &str) -> Markup {
+    html! {
+        h1 { "Wos kochmer denn heut?" }
+        hr { }
+        p { a href="/dishes/new" {"Wos neus!"} }
+        (dish_search_form(query))
+        hr { }
+        (dish_table(dishes))
+    }
+}
+
+pub fn dish_search_form(query: &str) -> Markup {
+    html! {
+        form action="/dishes" method="get" class="tool-bar" {
+            label for="search" { "Ich such wos beschdimmds: " }
+            input id="search" type="search" name="q" value=(query) { }
+            input type="submit" value="Suche!" { }
+        }
+    }
+}
+
 pub fn dish_table(dishes: &[Dish]) -> Markup {
     html! {
         table {

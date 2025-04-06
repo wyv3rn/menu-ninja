@@ -1,18 +1,18 @@
-use std::sync::Arc;
+use std::{collections::HashMap, sync::Arc};
 
 use axum::{
     Form, Router,
-    extract::{Path, State},
+    extract::{Path, Query, State},
     response::{IntoResponse, Redirect, Response},
     routing::{get, post},
 };
-use maud::{Markup, html};
+use maud::Markup;
 
 mod model;
 mod view;
 
 use model::{DishesDb, NewDishForm, now};
-use view::{dish_table, new_dish_form};
+use view::{landing_page, new_dish_form};
 
 type StateDb = State<Arc<DishesDb>>;
 
@@ -34,14 +34,11 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-async fn dishes(State(db): StateDb) -> Markup {
-    let mut dishes = db.search_dishes("");
+async fn dishes(State(db): StateDb, Query(args): Query<HashMap<String, String>>) -> Markup {
+    let query = args.get("q").cloned().unwrap_or_default();
+    let mut dishes = db.search_dishes(&query);
     dishes.sort_unstable_by_key(|d| d.last_cooked());
-    html! {
-        h1 { "Wos kochmer denn heut?" }
-        p { a href="/dishes/new" {"Wos neus!"} }
-        (dish_table(&dishes))
-    }
+    landing_page(&dishes, &query)
 }
 
 async fn new_dish_get() -> Markup {

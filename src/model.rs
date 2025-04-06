@@ -68,10 +68,12 @@ impl Dishes {
     }
 
     pub fn search_dishes(&self, query: &str) -> Vec<Dish> {
+        let query_all_lower = query.to_string().to_lowercase();
         self.dishes
             .iter()
             .filter_map(|(k, v)| {
-                if k.contains(query) {
+                let k_all_lower = k.to_lowercase();
+                if k_all_lower.contains(&query_all_lower) {
                     Some(v.clone())
                 } else {
                     None
