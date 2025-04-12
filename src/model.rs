@@ -6,6 +6,9 @@ use std::{
 use bjw_db_derive::derive_bjw_db;
 use serde::{Deserialize, Serialize};
 
+type Error = &'static str;
+type Result<T> = std::result::Result<T, Error>;
+
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Dish {
     name: String,
@@ -51,11 +54,13 @@ struct Dishes {
 
 #[derive_bjw_db(thread_safe)]
 impl Dishes {
-    pub fn new_dish(&mut self, name: String) {
-        // TODO dependency: return a failure indication if entry exists
+    pub fn new_dish(&mut self, name: String) -> Result<()> {
         if let Entry::Vacant(e) = self.dishes.entry(name.clone()) {
             let dish = Dish::new(&name);
             e.insert(dish);
+            Ok(())
+        } else {
+            Err("Dish exists")
         }
     }
 

@@ -50,12 +50,10 @@ async fn new_dish_post(State(db): StateDb, Form(input): Form<NewDishForm>) -> Re
         return new_dish_form(&["Wie heißt er?"]).into_response();
     }
 
-    // TODO blocked: as soon as `new_dish` returns a Result, use that
-    if db.dish_exists(&input.name) {
-        new_dish_form(&["Zefix, des gibts scho!"]).into_response()
-    } else {
-        db.new_dish(input.name).unwrap(); // TODO no unwrap
-        Redirect::to("/dishes").into_response()
+    match db.new_dish(input.name).unwrap() {
+        // TODO no unwrap
+        Ok(_) => Redirect::to("/dishes").into_response(),
+        Err(_) => new_dish_form(&["Zefix, des gibts scho!"]).into_response(),
     }
 }
 
