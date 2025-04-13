@@ -6,6 +6,7 @@ use axum::{
     response::{IntoResponse, Redirect, Response},
     routing::{get, post},
 };
+use clap::Parser;
 use maud::Markup;
 
 mod model;
@@ -16,11 +17,24 @@ use view::{landing_page, new_dish_form};
 
 type StateDb = State<Arc<DishesDb>>;
 
+#[derive(Parser)]
+#[command(version, about)]
+struct Args {
+    /// TCP address to bind on
+    #[arg(short, long, default_value = "0.0.0.0:8080")]
+    address: String,
+    /// Path to database
+    #[arg(short, long, default_value = "menu-ninja-db")]
+    database: String,
+}
+
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
+    let args = Args::parse();
 
-    let db = Arc::new(DishesDb::open("test-db").expect("Failed to open database"));
+    println!("Opening database at {}", args.database);
+    let db = Arc::new(DishesDb::open(args.database).expect("Failed to open database"));
     let app = Router::new()
         .route("/", get(|| async { Redirect::to("/dishes") }))
         .route("/dishes", get(dishes))
@@ -30,7 +44,8 @@ async fn main() {
         .route("/dishes/{name}/delete", post(delete_dish))
         .with_state(db);
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await.unwrap();
+    println!("Binding to address {}", args.address);
+    let listener = tokio::net::TcpListener::bind(args.address).await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
 

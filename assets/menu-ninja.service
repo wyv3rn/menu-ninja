@@ -1,0 +1,9 @@
+[Unit]
+Description=Menu Ninja
+
+[Service]
+Type=exec
+ExecStart=/usr/local/bin/menu-ninja --database /var/lib/menu-ninja-db
+
+[Install]
+WantedBy=multi-user.target
