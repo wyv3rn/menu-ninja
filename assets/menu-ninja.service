@@ -3,7 +3,7 @@ Description=Menu Ninja
 
 [Service]
 Type=exec
-ExecStart=/usr/local/bin/menu-ninja --database /var/lib/menu-ninja-db
+ExecStart=%h/.local/bin/menu-ninja --database %h/.local/state/menu-ninja/db
 
 [Install]
 WantedBy=multi-user.target

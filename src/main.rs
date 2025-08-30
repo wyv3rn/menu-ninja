@@ -34,6 +34,9 @@ async fn main() {
     let args = Args::parse();
 
     println!("Opening database at {}", args.database);
+    let db_path = std::path::Path::new(&args.database);
+    std::fs::create_dir_all(db_path.parent().expect("Where are my parents?"))
+        .expect("Failed to create dir for database");
     let db = Arc::new(DishesDb::open(args.database).expect("Failed to open database"));
     let app = Router::new()
         .route("/", get(|| async { Redirect::to("/dishes") }))
